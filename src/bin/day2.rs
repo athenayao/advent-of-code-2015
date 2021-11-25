@@ -48,6 +48,7 @@ mod tests {
         assert_eq!(calculate_paper("1x1x10"), 43);
     }
 
+    #[test]
     fn test_calculate_ribbon() {
         assert_eq!(calculate_ribbon("2x3x4"), 34);
         assert_eq!(calculate_ribbon("1x1x10"), 14);
