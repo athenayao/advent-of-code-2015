@@ -1,16 +1,32 @@
 use std::collections::HashSet;
 
+struct Visitor {
+    current_x: i32,
+    current_y: i32,
+    visited: HashSet<String>,
+}
+
+fn move_and_deliver_present(visitor: &mut Visitor, delta_x: i32, delta_y: i32)  {
+    visitor.current_x = visitor.current_x + delta_x;
+    visitor.current_y = visitor.current_y + delta_y;
+    visitor.visited.insert(format!("{}:{}", visitor.current_x, visitor.current_y));
+}
+
 fn count_houses(input: &str) -> usize {
-    let mut santa_x = 0;
-    let mut santa_y = 0;
-    let mut robo_x = 0;
-    let mut robo_y = 0;
+    let mut santa = Visitor {
+        current_x: 0,
+        current_y: 0,
+        visited: HashSet::new(),
+    };
+    let mut robo_santa = Visitor {
+        current_x: 0,
+        current_y: 0,
+        visited: HashSet::new(),
+    };
 
-    let mut santa_set = HashSet::new();
-    let mut robo_set = HashSet::new();
+    move_and_deliver_present(&mut santa, 0, 0);
+    move_and_deliver_present(&mut robo_santa, 0, 0);
 
-    santa_set.insert(format!("{}:{}", santa_x, santa_y));
-    robo_set.insert(format!("{}:{}", robo_x, robo_y));
     for (i, c) in input.chars().enumerate() {
         let (delta_x, delta_y) = match c {
             '>' => (1, 0),
@@ -20,16 +36,12 @@ fn count_houses(input: &str) -> usize {
             _ => (0, 0),
         };
         if i % 2 == 0 {
-            santa_x = santa_x + delta_x;
-            santa_y = santa_y + delta_y;
-            santa_set.insert(format!("{}:{}", santa_x, santa_y));
+            move_and_deliver_present(&mut santa, delta_x, delta_y);
         } else {
-            robo_x = robo_x + delta_x;
-            robo_y = robo_y + delta_y;
-            robo_set.insert(format!("{}:{}", robo_x, robo_y));
+            move_and_deliver_present(&mut robo_santa, delta_x, delta_y);
         }
     }
-    let the_union: HashSet<_> = santa_set.union(&robo_set).collect();
+    let the_union: HashSet<_> = santa.visited.union(&robo_santa.visited).collect();
     the_union.len()
 }
 
