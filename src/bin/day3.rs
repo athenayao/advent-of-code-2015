@@ -6,26 +6,28 @@ struct Visitor {
     visited: HashSet<String>,
 }
 
-fn move_and_deliver_present(visitor: &mut Visitor, delta_x: i32, delta_y: i32)  {
-    visitor.current_x = visitor.current_x + delta_x;
-    visitor.current_y = visitor.current_y + delta_y;
-    visitor.visited.insert(format!("{}:{}", visitor.current_x, visitor.current_y));
+impl Visitor {
+    fn visit(&mut self, delta_x: i32, delta_y: i32) {
+        self.current_x = self.current_x + delta_x;
+        self.current_y = self.current_y + delta_y;
+        self.visited.insert(format!("{}:{}", self.current_x, self.current_y));
+    }
+}
+
+fn build_visitor() -> Visitor {
+    let mut visitor = Visitor {
+        current_x: 0,
+        current_y: 0,
+        visited: HashSet::new()
+    };
+    visitor.visit(0, 0);
+    visitor
 }
 
 fn count_houses(input: &str) -> usize {
-    let mut santa = Visitor {
-        current_x: 0,
-        current_y: 0,
-        visited: HashSet::new(),
-    };
-    let mut robo_santa = Visitor {
-        current_x: 0,
-        current_y: 0,
-        visited: HashSet::new(),
-    };
+    let mut santa = build_visitor();
+    let mut robo_santa = build_visitor();
 
-    move_and_deliver_present(&mut santa, 0, 0);
-    move_and_deliver_present(&mut robo_santa, 0, 0);
 
     for (i, c) in input.chars().enumerate() {
         let (delta_x, delta_y) = match c {
@@ -36,9 +38,10 @@ fn count_houses(input: &str) -> usize {
             _ => (0, 0),
         };
         if i % 2 == 0 {
-            move_and_deliver_present(&mut santa, delta_x, delta_y);
+            santa.visit(delta_x, delta_y);
         } else {
-            move_and_deliver_present(&mut robo_santa, delta_x, delta_y);
+            robo_santa.visit(delta_x, delta_y);
+
         }
     }
     let the_union: HashSet<_> = santa.visited.union(&robo_santa.visited).collect();
