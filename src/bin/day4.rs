@@ -10,7 +10,7 @@ fn get_earliest_number(secret_key: &str) -> u32 {
     let mut number = 0;
     loop {
         let md5_hash = format!("{:x}", get_hash(secret_key, number));
-        if md5_hash.starts_with("00000") {
+        if md5_hash.starts_with("000000") {
             break number;
         }
         number += 1;
